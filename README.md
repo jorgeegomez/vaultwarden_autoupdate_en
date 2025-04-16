@@ -16,7 +16,7 @@ Does not work for Docker Installations!
 - Debian/Ubuntu system with `systemd`
 - Root permissions
 - Required tools installed:
-  - `curl`, `cargo`, `git`, `wget`, `sendmail`
+  - `curl`, `cargo`, `git`, `wget`
 
 ## 📥 Installation
 
