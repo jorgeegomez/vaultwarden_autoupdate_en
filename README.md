@@ -7,7 +7,7 @@ Does not work for Docker Installations!
 
 - 🔄 Automatically fetches and builds the **latest Vaultwarden binary**
 - 🌐 Automatically downloads and installs the **latest Web UI**
-- ✅ Checks required packages: `curl`, `cargo`, `git`, `wget`, `sendmail`
+- ✅ Checks required packages: `curl`, `cargo`, `git`, `wget`
 - 💾 Creates backups of the current Vaultwarden binary and Web UI
 - 🧹 Cleans up temp files after update
 
