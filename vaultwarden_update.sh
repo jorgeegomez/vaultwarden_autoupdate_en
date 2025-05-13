@@ -18,55 +18,55 @@ function log {
 
 function check_root {
     if [ "$(id -u)" -ne 0 ]; then
-        log "Dieses Script muss als root ausgeführt werden."
+        log "This script must be run as root."
         exit 1
     fi
 }
 
 function check_dependencies {
-    log "Prüfe benötigte Programme..."
+    log "Checking required programs..."
     for cmd in curl cargo git wget; do
         if ! command -v "$cmd" &> /dev/null; then
-            log "Fehler: '$cmd' ist nicht installiert."
+            log "Error: '$cmd' is not installed."
             exit 1
         fi
     done
-    log "Alle benötigten Programme sind vorhanden."
+    log "All required programs are present."
 }
 
 function system_update {
-    log "Starte System-Update..."
+    log "Starting system update..."
     apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
-    log "System-Update abgeschlossen."
+    log "System update completed."
 }
 
 function backup_existing_installation {
-    log "Starte Backup der aktuellen Installation..."
+    log "Starting backup of current installation..."
     mkdir -p "$BACKUP_DIR"
 
     if [ -f /usr/bin/vaultwarden ]; then
         cp /usr/bin/vaultwarden "$BACKUP_DIR/"
-        log "Vaultwarden Binary gesichert."
+        log "Vaultwarden binary backed up."
     fi
 
     if [ -d /var/lib/vaultwarden/web-vault ]; then
         cp -r /var/lib/vaultwarden/web-vault "$BACKUP_DIR/"
-        log "WebUI gesichert."
+        log "WebUI backed up."
     fi
 
-    log "Backup abgeschlossen: $BACKUP_DIR"
+    log "Backup completed: $BACKUP_DIR"
 }
 
 function fetch_latest_vaultwarden_version {
-    log "Ermittle neueste Vaultwarden-Version..."
+    log "Fetching latest Vaultwarden version..."
     VW_VERSION=$(curl -s "$GITHUB_API_VW" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    log "Neueste Vaultwarden-Version: $VW_VERSION"
+    log "Latest Vaultwarden version: $VW_VERSION"
 }
 
 function update_vaultwarden {
     fetch_latest_vaultwarden_version
 
-    log "Starte Vaultwarden Update..."
+    log "Starting Vaultwarden update..."
     mkdir -p "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 
@@ -85,15 +85,15 @@ function update_vaultwarden {
     systemctl start vaultwarden.service
 
     VAULTWARDEN_VERSION=$(vaultwarden --version)
-    log "Vaultwarden Version nach Update: $VAULTWARDEN_VERSION"
+    log "Vaultwarden version after update: $VAULTWARDEN_VERSION"
 
-    log "Vaultwarden Update abgeschlossen."
+    log "Vaultwarden update completed."
 }
 
 function fetch_latest_webui_version {
-    log "Ermittle neueste WebUI-Version..."
+    log "Fetching latest WebUI version..."
     WEBUI_VERSION=$(curl -s "$GITHUB_API_WEBUI" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    log "Neueste WebUI-Version: $WEBUI_VERSION"
+    log "Latest WebUI version: $WEBUI_VERSION"
 }
 
 function update_webui {
@@ -102,7 +102,7 @@ function update_webui {
     WEBUI_TAR="bw_web_${WEBUI_VERSION}.tar.gz"
     WEBUI_URL="https://github.com/dani-garcia/bw_web_builds/releases/download/${WEBUI_VERSION}/${WEBUI_TAR}"
 
-    log "Starte WebUI Update (${WEBUI_VERSION})..."
+    log "Starting WebUI update (${WEBUI_VERSION})..."
     cd "$INSTALL_DIR"
 
     wget "$WEBUI_URL"
@@ -112,22 +112,22 @@ function update_webui {
         systemctl stop vaultwarden.service
         cp -R web-vault/ /var/lib/vaultwarden/
         systemctl start vaultwarden.service
-        log "WebUI Update abgeschlossen."
+        log "WebUI update completed."
     else
-        log "Fehler: web-vault Verzeichnis nicht gefunden."
+        log "Error: web-vault directory not found."
         exit 1
     fi
 }
 
 function cleanup {
-    log "Starte Aufräumarbeiten..."
+    log "Starting cleanup..."
     rm -rf "$VAULTWARDEN_DIR"
     rm -f "$INSTALL_DIR/bw_web_*.tar.gz"
-    log "Aufräumarbeiten abgeschlossen."
+    log "Cleanup completed."
 }
 
 function finish {
-    log "Update abgeschlossen. Bitte kontrolliere die Version über das WebUI:"
+    log "Update completed. Please verify the version via the WebUI:"
     log "https://{your-domain}/admin/diagnostics"
 }
 
@@ -142,6 +142,6 @@ function main {
     finish
 }
 
-trap 'log "Fehler während der Ausführung."; exit 1' ERR
+trap 'log "Error during execution."; exit 1' ERR
 
 main
